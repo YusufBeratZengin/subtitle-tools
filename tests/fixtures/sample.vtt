@@ -1,0 +1,22 @@
+WEBVTT - Header info
+
+STYLE
+::cue {
+  color: cyan;
+}
+
+NOTE This is a commentary note
+spanning multiple lines.
+
+cue-1
+00:00:01.000 --> 00:00:04.000 align:start position:10%
+Welcome to subtitle-tools!
+
+cue-2
+00:00:05.500 --> 00:00:08.250
+A zero-dependency subtitle processor.
+Second line of subtitle.
+
+cue-3
+00:00:10.000 --> 00:00:13.000
+Enjoy converting and linting your files.

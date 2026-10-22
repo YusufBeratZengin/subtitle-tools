@@ -1,0 +1,12 @@
+1
+00:00:01,000 --> 00:00:04,000
+Welcome to subtitle-tools!
+
+2
+00:00:05,500 --> 00:00:08,250
+A zero-dependency subtitle processor.
+Second line of subtitle.
+
+3
+00:00:10,000 --> 00:00:13,000
+Enjoy converting and linting your files.

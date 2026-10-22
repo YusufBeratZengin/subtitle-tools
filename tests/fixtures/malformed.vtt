@@ -1,0 +1,9 @@
+WEBVTT
+
+NOTE Malformed file test note
+
+01.000 --> 04.000
+<b><i>Mixed tags without proper close</b>
+
+05.000 --> 08.000 line:0%
+Normal cue with single settings
