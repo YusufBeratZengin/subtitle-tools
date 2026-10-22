@@ -79,14 +79,13 @@ class VttParser(BaseSubtitleParser):
             identifier: str | None = None
             timing_match = _RE_VTT_TIMING.match(line)
 
-            if not timing_match:
+            if not timing_match and i + 1 < n:
                 # Potential identifier line. Check if next line is a timing line.
-                if i + 1 < n:
-                    next_timing_match = _RE_VTT_TIMING.match(lines[i + 1].strip())
-                    if next_timing_match:
-                        identifier = line
-                        i += 1
-                        timing_match = next_timing_match
+                next_timing_match = _RE_VTT_TIMING.match(lines[i + 1].strip())
+                if next_timing_match:
+                    identifier = line
+                    i += 1
+                    timing_match = next_timing_match
 
             if timing_match:
                 start_str = timing_match.group("start")
@@ -141,16 +140,13 @@ class VttWriter(BaseSubtitleWriter):
         parts: list[str] = [doc.vtt_header]
 
         # Preserve REGION blocks
-        for region in doc.vtt_regions:
-            parts.append(region)
+        parts.extend(doc.vtt_regions)
 
         # Preserve STYLE blocks
-        for style in doc.vtt_styles:
-            parts.append(style)
+        parts.extend(doc.vtt_styles)
 
         # Preserve NOTE blocks (top-level)
-        for note in doc.vtt_notes:
-            parts.append(note)
+        parts.extend(doc.vtt_notes)
 
         # Render cues
         for cue in doc.cues:

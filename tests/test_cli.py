@@ -99,7 +99,7 @@ class TestCli(unittest.TestCase):
         bad_file.write_text("1\n00:00:04,000 --> 00:00:02,000\nNegative duration\n", encoding="utf-8")
 
         with tempfile.NamedTemporaryFile("w+", delete=False) as tmp_out:
-            tmp_out_path = Path(tmp_out.name)
+            _tmp_out_path = Path(tmp_out.name)
 
         with patch("sys.stdout.write") as mock_stdout:
             code = main(["lint", str(bad_file), "--format", "json"])

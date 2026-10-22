@@ -4,8 +4,7 @@ import unittest
 from pathlib import Path
 
 from subtitle_tools.encoding import read_subtitle_file
-from subtitle_tools.parsers import guess_format, parse, write
-from subtitle_tools.types import SubtitleDocument
+from subtitle_tools.parsers import parse, write
 
 FIXTURES_DIR = Path(__file__).parent / "fixtures"
 
@@ -15,7 +14,7 @@ class TestFixtures(unittest.TestCase):
 
     def test_sample_srt_roundtrip(self) -> None:
         path = FIXTURES_DIR / "sample.srt"
-        text, enc, _, _ = read_subtitle_file(path)
+        text, _enc, _, _ = read_subtitle_file(path)
         doc1 = parse(text, "srt")
         self.assertEqual(len(doc1.cues), 3)
 
@@ -29,7 +28,7 @@ class TestFixtures(unittest.TestCase):
 
     def test_sample_vtt_roundtrip(self) -> None:
         path = FIXTURES_DIR / "sample.vtt"
-        text, enc, _, _ = read_subtitle_file(path)
+        text, _enc, _, _ = read_subtitle_file(path)
         doc1 = parse(text, "vtt")
         self.assertEqual(len(doc1.cues), 3)
         self.assertTrue(len(doc1.vtt_styles) > 0)
@@ -43,7 +42,7 @@ class TestFixtures(unittest.TestCase):
 
     def test_sample_ass_roundtrip(self) -> None:
         path = FIXTURES_DIR / "sample.ass"
-        text, enc, _, _ = read_subtitle_file(path)
+        text, _enc, _, _ = read_subtitle_file(path)
         doc1 = parse(text, "ass")
         self.assertEqual(len(doc1.cues), 3)
         self.assertTrue(len(doc1.ass_unknown_sections) > 0)

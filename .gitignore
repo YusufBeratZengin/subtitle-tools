@@ -65,3 +65,4 @@ venv.bak/
 *.swo
 *~
 .DS_Store
+is/

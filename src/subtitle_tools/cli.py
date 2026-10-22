@@ -6,23 +6,44 @@ import argparse
 import glob
 import json
 import sys
+from collections.abc import Sequence
 from pathlib import Path
-from typing import Sequence
+from typing import Any, TypedDict
 
 from subtitle_tools.encoding import read_subtitle_file, write_subtitle_file
 from subtitle_tools.lint import LintConfig, fix_document, lint_document
 from subtitle_tools.operations import (
     convert as op_convert,
+)
+from subtitle_tools.operations import (
     join as op_join,
+)
+from subtitle_tools.operations import (
     merge as op_merge,
+)
+from subtitle_tools.operations import (
     renumber as op_renumber,
+)
+from subtitle_tools.operations import (
     scale as op_scale,
+)
+from subtitle_tools.operations import (
     shift as op_shift,
+)
+from subtitle_tools.operations import (
     split as op_split,
+)
+from subtitle_tools.operations import (
     strip_tags as op_strip_tags,
 )
 from subtitle_tools.parsers import guess_format, parse, write
 from subtitle_tools.time import format_srt_time, parse_offset, parse_time
+
+
+class _LintResult(TypedDict):
+    file: str
+    issues: list[dict[str, Any]]
+    fixes_applied: int
 
 
 def _expand_globs(patterns: Sequence[str]) -> list[Path]:
@@ -76,7 +97,7 @@ def cmd_convert(args: argparse.Namespace) -> int:
     from_fmt = args.from_format or guess_format(in_path)
     to_fmt = args.to_format or guess_format(out_path)
 
-    doc, enc, _, _ = _load_doc(in_path, fmt=from_fmt, encoding=args.encoding)
+    doc, _enc, _, _ = _load_doc(in_path, fmt=from_fmt, encoding=args.encoding)
     converted_doc = op_convert(doc, target_format=to_fmt)
     converted_doc.encoding = "utf-8"
 
@@ -230,13 +251,13 @@ def cmd_lint(args: argparse.Namespace) -> int:
         max_duration_ms=args.max_duration,
     )
 
-    results = []
+    results: list[_LintResult] = []
     has_errors = False
 
     for file_path in files:
         try:
-            doc, enc, has_bom, has_mixed_newlines = _load_doc(file_path, encoding=args.encoding)
-        except Exception as exc:
+            doc, _enc, has_bom, has_mixed_newlines = _load_doc(file_path, encoding=args.encoding)
+        except Exception as exc:  # noqa: BLE001 -- Report any per-file failure and continue the batch.
             results.append({
                 "file": str(file_path),
                 "issues": [{
@@ -316,7 +337,7 @@ def cmd_info(args: argparse.Namespace) -> int:
                 f"  Cues:     {len(doc.cues)}\n"
                 f"  Duration: {dur_str} ({doc.total_duration}ms)\n"
             )
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 -- Report any per-file failure and continue the batch.
             sys.stderr.write(f"{file_path.name}: Failed to read ({exc})\n")
 
     return 0

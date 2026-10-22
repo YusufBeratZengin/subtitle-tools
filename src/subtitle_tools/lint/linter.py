@@ -102,102 +102,96 @@ def lint_document(
         dur = en - st
 
         # 1. Overlap rule
-        if cfg.is_rule_enabled("overlap"):
-            if prev_end is not None and st < prev_end:
-                overlap_ms = prev_end - st
-                can_fix = overlap_ms <= cfg.overlap_fix_threshold_ms
-                issues.append(
-                    LintIssue(
-                        rule_id="overlap",
-                        message=f"Cue overlaps previous cue by {overlap_ms}ms (starts at {st}ms, previous ended at {prev_end}ms)",
-                        severity="error",
-                        cue_index=cue_idx,
-                        cue_start=st,
-                        cue_end=en,
-                        fixable=can_fix,
-                        details={"overlap_ms": overlap_ms},
-                    )
+        if cfg.is_rule_enabled("overlap") and prev_end is not None and st < prev_end:
+            overlap_ms = prev_end - st
+            can_fix = overlap_ms <= cfg.overlap_fix_threshold_ms
+            issues.append(
+                LintIssue(
+                    rule_id="overlap",
+                    message=f"Cue overlaps previous cue by {overlap_ms}ms (starts at {st}ms, previous ended at {prev_end}ms)",
+                    severity="error",
+                    cue_index=cue_idx,
+                    cue_start=st,
+                    cue_end=en,
+                    fixable=can_fix,
+                    details={"overlap_ms": overlap_ms},
                 )
+            )
 
         # 2. Negative duration
-        if cfg.is_rule_enabled("negative-duration"):
-            if dur < 0:
-                issues.append(
-                    LintIssue(
-                        rule_id="negative-duration",
-                        message=f"Cue end time ({en}ms) is before start time ({st}ms)",
-                        severity="error",
-                        cue_index=cue_idx,
-                        cue_start=st,
-                        cue_end=en,
-                        fixable=True,
-                    )
+        if cfg.is_rule_enabled("negative-duration") and dur < 0:
+            issues.append(
+                LintIssue(
+                    rule_id="negative-duration",
+                    message=f"Cue end time ({en}ms) is before start time ({st}ms)",
+                    severity="error",
+                    cue_index=cue_idx,
+                    cue_start=st,
+                    cue_end=en,
+                    fixable=True,
                 )
+            )
 
         # 3. Zero duration
-        if cfg.is_rule_enabled("zero-duration"):
-            if dur == 0:
-                issues.append(
-                    LintIssue(
-                        rule_id="zero-duration",
-                        message=f"Cue duration is zero ({st}ms to {en}ms)",
-                        severity="error",
-                        cue_index=cue_idx,
-                        cue_start=st,
-                        cue_end=en,
-                        fixable=True,
-                    )
+        if cfg.is_rule_enabled("zero-duration") and dur == 0:
+            issues.append(
+                LintIssue(
+                    rule_id="zero-duration",
+                    message=f"Cue duration is zero ({st}ms to {en}ms)",
+                    severity="error",
+                    cue_index=cue_idx,
+                    cue_start=st,
+                    cue_end=en,
+                    fixable=True,
                 )
+            )
 
         # 4. Too short duration
-        if cfg.is_rule_enabled("too-short-duration"):
-            if 0 < dur < cfg.min_duration_ms:
-                issues.append(
-                    LintIssue(
-                        rule_id="too-short-duration",
-                        message=f"Cue duration ({dur}ms) is shorter than minimum ({cfg.min_duration_ms}ms)",
-                        severity="warning",
-                        cue_index=cue_idx,
-                        cue_start=st,
-                        cue_end=en,
-                        fixable=False,
-                        details={"duration_ms": dur, "min_ms": cfg.min_duration_ms},
-                    )
+        if cfg.is_rule_enabled("too-short-duration") and 0 < dur < cfg.min_duration_ms:
+            issues.append(
+                LintIssue(
+                    rule_id="too-short-duration",
+                    message=f"Cue duration ({dur}ms) is shorter than minimum ({cfg.min_duration_ms}ms)",
+                    severity="warning",
+                    cue_index=cue_idx,
+                    cue_start=st,
+                    cue_end=en,
+                    fixable=False,
+                    details={"duration_ms": dur, "min_ms": cfg.min_duration_ms},
                 )
+            )
 
         # 5. Too long duration
-        if cfg.is_rule_enabled("too-long-duration"):
-            if dur > cfg.max_duration_ms:
-                issues.append(
-                    LintIssue(
-                        rule_id="too-long-duration",
-                        message=f"Cue duration ({dur}ms) exceeds maximum ({cfg.max_duration_ms}ms)",
-                        severity="warning",
-                        cue_index=cue_idx,
-                        cue_start=st,
-                        cue_end=en,
-                        fixable=False,
-                        details={"duration_ms": dur, "max_ms": cfg.max_duration_ms},
-                    )
+        if cfg.is_rule_enabled("too-long-duration") and dur > cfg.max_duration_ms:
+            issues.append(
+                LintIssue(
+                    rule_id="too-long-duration",
+                    message=f"Cue duration ({dur}ms) exceeds maximum ({cfg.max_duration_ms}ms)",
+                    severity="warning",
+                    cue_index=cue_idx,
+                    cue_start=st,
+                    cue_end=en,
+                    fixable=False,
+                    details={"duration_ms": dur, "max_ms": cfg.max_duration_ms},
                 )
+            )
 
         # 6. Empty cue
         visible_text = strip_formatting_tags(cue.text).strip()
-        if cfg.is_rule_enabled("empty-cue"):
-            if not visible_text:
-                issues.append(
-                    LintIssue(
-                        rule_id="empty-cue",
-                        message="Cue text is empty or contains only formatting/whitespace",
-                        severity="error",
-                        cue_index=cue_idx,
-                        cue_start=st,
-                        cue_end=en,
-                        fixable=True,
-                    )
+        if cfg.is_rule_enabled("empty-cue") and not visible_text:
+            issues.append(
+                LintIssue(
+                    rule_id="empty-cue",
+                    message="Cue text is empty or contains only formatting/whitespace",
+                    severity="error",
+                    cue_index=cue_idx,
+                    cue_start=st,
+                    cue_end=en,
+                    fixable=True,
                 )
-                prev_end = en
-                continue
+            )
+            prev_end = en
+            continue
 
         # 7. Unbalanced tags
         if cfg.is_rule_enabled("unbalanced-tags"):

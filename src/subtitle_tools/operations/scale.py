@@ -63,7 +63,7 @@ def scale(
 
     new_doc = doc.clone()
     for cue in new_doc.cues:
-        cue.start = int(round(cue.start * multiplier))
-        cue.end = int(round(cue.end * multiplier))
+        cue.start = round(cue.start * multiplier)
+        cue.end = round(cue.end * multiplier)
 
     return new_doc

@@ -44,13 +44,13 @@ def parse_time(time_str: str) -> int:
         val = float(offset_match.group("value"))
         unit = (offset_match.group("unit") or "ms").lower()
         if unit == "ms":
-            ms = int(round(val))
+            ms = round(val)
         elif unit == "s":
-            ms = int(round(val * 1000))
+            ms = round(val * 1000)
         elif unit == "m":
-            ms = int(round(val * 60_000))
+            ms = round(val * 60_000)
         elif unit == "h":
-            ms = int(round(val * 3_600_000))
+            ms = round(val * 3_600_000)
         else:
             raise ValueError(f"Unknown time unit: {unit}")
         return sign * ms
@@ -87,7 +87,7 @@ def parse_time(time_str: str) -> int:
         val = float(s)
         # If float with decimal or integer without unit, treat as ms if integer > 1000 or seconds if has decimal
         # But to be safe and deterministic: if no unit and just number, treat as milliseconds
-        return sign * int(round(val))
+        return sign * round(val)
     except ValueError:
         pass
 
@@ -134,7 +134,7 @@ def format_ass_time(ms: int) -> str:
         return "0:00:00.00"
 
     # Centiseconds rounded
-    total_cs = int(round(ms / 10.0))
+    total_cs = round(ms / 10.0)
     total_seconds, cs = divmod(total_cs, 100)
     total_minutes, seconds = divmod(total_seconds, 60)
     hours, minutes = divmod(total_minutes, 60)

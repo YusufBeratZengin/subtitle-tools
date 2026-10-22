@@ -3,9 +3,9 @@
 import unittest
 
 from subtitle_tools.operations.convert import convert
-from subtitle_tools.parsers.srt import SrtParser, SrtWriter
-from subtitle_tools.parsers.vtt import VttParser, VttWriter
-from subtitle_tools.parsers.ass import AssParser, AssWriter
+from subtitle_tools.parsers.ass import AssWriter
+from subtitle_tools.parsers.srt import SrtWriter
+from subtitle_tools.parsers.vtt import VttWriter
 from subtitle_tools.types import Cue, SubtitleDocument
 
 

@@ -3,7 +3,6 @@
 import unittest
 
 from subtitle_tools.parsers.ass import AssParser, AssWriter
-from subtitle_tools.types import Cue, SubtitleDocument
 
 
 class TestAss(unittest.TestCase):

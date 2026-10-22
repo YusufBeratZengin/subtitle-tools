@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import re
-
 from subtitle_tools.parsers.base import BaseSubtitleParser, BaseSubtitleWriter
 from subtitle_tools.time import format_ass_time, parse_time
 from subtitle_tools.types import Cue, SubtitleDocument
@@ -86,10 +84,10 @@ class AssParser(BaseSubtitleParser):
                 if line.startswith("Format:"):
                     cols = [c.strip().lower() for c in line.split(":", 1)[1].split(",")]
                     events_format = cols
-                elif line.startswith("Dialogue:") or line.startswith("Comment:"):
+                elif line.startswith(("Dialogue:", "Comment:")):
                     # Only parse Dialogue as cues (Comments can be stored if needed)
                     is_dialogue = line.startswith("Dialogue:")
-                    prefix, rest = line.split(":", 1)
+                    _prefix, rest = line.split(":", 1)
                     if not events_format:
                         events_format = [
                             "layer", "start", "end", "style", "name",

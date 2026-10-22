@@ -5,7 +5,6 @@ from __future__ import annotations
 from subtitle_tools.operations.tags import strip_formatting_tags
 from subtitle_tools.parsers.ass import (
     DEFAULT_EVENTS_FORMAT,
-    DEFAULT_SCRIPT_INFO,
     DEFAULT_STYLE_LINE,
     DEFAULT_STYLES_FORMAT,
 )

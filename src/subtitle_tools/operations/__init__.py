@@ -11,12 +11,12 @@ from subtitle_tools.operations.tags import strip_formatting_tags, strip_tags
 
 __all__ = [
     "convert",
-    "shift",
-    "scale",
-    "merge",
-    "split",
     "join",
+    "merge",
     "renumber",
-    "strip_tags",
+    "scale",
+    "shift",
+    "split",
     "strip_formatting_tags",
+    "strip_tags",
 ]

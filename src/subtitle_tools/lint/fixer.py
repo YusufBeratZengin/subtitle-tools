@@ -31,17 +31,9 @@ def auto_fix_tags(text: str) -> str:
         fixed = "".join(parts)
 
     # Process HTML / VTT tags
-    tokens = _RE_TAG_TOKEN.split(fixed)
-    # _RE_TAG_TOKEN.split with 3 capturing groups yields chunks:
-    # chunk 0: text before
-    # chunk 1: full match <...>
-    # chunk 2: "/" if closing, else None
-    # chunk 3: tag name
-    # chunk 4: text after
     result_pieces: list[str] = []
     open_stack: list[str] = []
 
-    pos = 0
     matches = list(_RE_TAG_TOKEN.finditer(fixed))
     if not matches:
         return fixed
@@ -147,11 +139,10 @@ def fix_document(
             curr = retained_cues[i]
             if curr.start < prev.end:
                 overlap_ms = prev.end - curr.start
-                if overlap_ms <= cfg.overlap_fix_threshold_ms:
+                if overlap_ms <= cfg.overlap_fix_threshold_ms and curr.start > prev.start:
                     # Shorten previous cue end to current cue start
-                    if curr.start > prev.start:
-                        prev.end = curr.start
-                        fixes_count += 1
+                    prev.end = curr.start
+                    fixes_count += 1
 
     new_doc.cues = retained_cues
     # 5. Renumber

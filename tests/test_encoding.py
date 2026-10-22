@@ -24,11 +24,11 @@ class TestEncoding(unittest.TestCase):
         )
 
     def test_detect_utf8_bom(self) -> None:
-        data = codecs.BOM_UTF8 + "Hello world".encode("utf-8")
+        data = codecs.BOM_UTF8 + b"Hello world"
         self.assertEqual(detect_encoding(data), "utf-8-sig")
 
     def test_detect_utf8(self) -> None:
-        data = "Simple plain UTF-8 text with symbols: © € 🚀".encode("utf-8")
+        data = "Simple plain UTF-8 text with symbols: © € 🚀".encode()
         self.assertEqual(detect_encoding(data), "utf-8")
 
     def test_detect_cp1252(self) -> None:

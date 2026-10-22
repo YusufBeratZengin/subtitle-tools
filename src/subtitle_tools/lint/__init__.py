@@ -8,8 +8,8 @@ __all__ = [
     "LintConfig",
     "LintIssue",
     "Severity",
-    "lint_document",
-    "fix_document",
     "auto_fix_tags",
     "check_unbalanced_tags",
+    "fix_document",
+    "lint_document",
 ]
