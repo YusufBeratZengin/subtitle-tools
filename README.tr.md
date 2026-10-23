@@ -1,54 +1,54 @@
 # subtitle-tools
 
-SubRip (`.srt`), WebVTT (`.vtt`) ve Advanced SubStation Alpha (`.ass` / `.ssa`) altyazı dosyalarını dönüştürmek, düzenlemek, onarmak ve lint etmek için sıfır bağımlılıklı Python komut satırı aracı ve kütüphanesi.
+[![CI](https://github.com/YusufBeratZengin/subtitle-tools/actions/workflows/ci.yml/badge.svg)](https://github.com/YusufBeratZengin/subtitle-tools/actions/workflows/ci.yml)
+[![PyPI version](https://img.shields.io/pypi/v/subtitle-tools.svg?color=blue)](https://pypi.org/project/subtitle-tools/)
+[![Python 3.10+](https://img.shields.io/badge/python-%3E%3D3.10-blue.svg)](https://www.python.org/)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
-[English README](README.md)
+SubRip (`.srt`), WebVTT (`.vtt`) ve Advanced SubStation Alpha (`.ass` / `.ssa`) altyazı dosyalarını dönüştürmek, düzenlemek, onarmak ve denetlemek (lint) için sıfır bağımlılıklı Python komut satırı aracı ve kütüphanesi.
 
-## Genel Bakış
+[English Documentation](README.md)
 
-İçerik üreticileri, video kurgucuları ve çevirmenler altyazı dosyalarını sıklıkla kaydırmak, ölçeklemek, birleştirmek, bölmek ve temizlemek zorunda kalmaktadır. Mevcut araçlar çoğunlukla yalnızca grafik arayüze (GUI) sahiptir, terk edilmiştir veya ağır harici C/FFmpeg bağımlılıklarına ihtiyaç duyar.
+![subtitle-tools demo](docs/demo.svg)
 
-`subtitle-tools`, hiçbir çalışma zamanı bağımlılığı bulunmayan (yalnızca Python standart kütüphanesi kullanan), yüksek hassasiyetli bir CLI aracı (`subtool`) ve tip tanımlı Python kütüphanesi (`src/` yerleşimi, `py.typed`) sunar.
+## Neden subtitle-tools?
 
-## Temel Özellikler
+- **Sıfır çalışma zamanı bağımlılığı**: Yalnızca Python standart kütüphanesini (>= 3.10) kullanır. Harici C kütüphaneleri, FFmpeg ikilileri veya derleme adımları gerektirmez.
+- **Çoklu format desteği ve tam doğruluk**: SubRip (`.srt`), WebVTT (`.vtt`) ve ASS/SSA (`.ass`) arasında iki yönlü kayıpsız dönüştürme yapar; stilleri, ipucu ayarlarını, notları ve bilinmeyen bölümleri olduğu gibi korur.
+- **Dahili denetleme (lint) ve otomatik onarım**: Zamanlama çakışmalarını, sıfır/negatif süreleri, satır sınırlarını ve okuma hızı (CPS) aşımlarını tespit eder; güvenli sorunları `--fix` bayrağı ile tek adımda yerinde onarır.
 
-- **Sıfır çalışma zamanı bağımlılığı**: Yalnızca Python >= 3.10 standart kütüphanesi.
-- **Çoklu format desteği**:
-  - **SubRip (`.srt`)**: Yaygın sözdizimi hatalarına karşı toleranslı, dayanıklı zaman ve indeks ayrıştırma.
-  - **WebVTT (`.vtt`)**: İpucu kimliklerini, ayarlarını, `NOTE`, `STYLE` ve `REGION` bloklarını korur.
-  - **ASS / SSA (`.ass`, `.ssa`)**: `[Script Info]`, `[V4+ Styles]` ve `[Events]` bölümlerini işler; bilinmeyen bölümleri (`[Aegisub Project Garbage]`, fontlar, grafikler) olduğu gibi korur.
-- **İşlemler**:
-  - `convert`: SRT, WebVTT ve ASS formatları arasında dönüştürme.
-  - `shift`: Zaman damgalarını pozitif/negatif değerlerle kaydırma (`1500ms`, `-2s`) veya hedef zamana hizalama.
-  - `scale`: Kare hızı dönüştürme (ör. 23.976 <-> 25 fps PAL hızlandırması) veya özel çarpan uygulama.
-  - `merge`: İki dildeki altyazıyı üst üste bindirilmiş çift dilli ipuçları halinde birleştirme.
-  - `split`: Altyazı dosyalarını süre aralıklarına göre parçalara ayırma (ör. 20 dakikalık bölümler).
-  - `join`: Birden çok altyazı dosyasını aralarına isteğe bağlı boşluk koyarak sıralı birleştirme.
-  - `renumber`: İpuçlarını 1'den başlayarak sıralı yeniden numaralandırma.
-  - `strip-tags`: HTML, WebVTT ve ASS biçimlendirme etiketlerini temizleme ve HTML varlıklarını çözme.
-- **Kapsamlı Lint ve Otomatik Onarım**:
-  - Zamanlama, okuma hızı (CPS), satır uzunluğu ve etiket dengesini yapılandırılabilir eşiklerle denetler.
-  - Güvenli kurallar için otomatik onarım (`--fix`): küçük çakışmaları düzeltir, sıfır/negatif süreleri giderir, boş ipuçlarını siler ve açık kalan etiketleri kapatır.
-- **Belgelenmiş Eski Kodlama Algılama**:
-  - Otomatik algılama sırası: `utf-8-sig` -> `utf-8` -> `cp1252` -> `cp1254` -> `latin-1`.
+## Hızlı Başlangıç
 
-## Kurulum
-
-Pip kullanarak kurun:
+Pip ile kurun:
 
 ```bash
-pip install .
+# Paketi kurun
+pip install subtitle-tools
+
+# Altyazı dosyası meta verilerini ve kodlamasını inceleyin
+subtool info film.srt
+
+# Zamanlama ve etiket hatalarını denetleyip otomatik onarın
+subtool lint film.srt --fix
+
+# SRT formatını WebVTT'ye dönüştürün
+subtool convert film.srt film.vtt
 ```
 
-Geliştirme ve testler için:
+Yerel geliştirme ve test çalıştırma:
 
 ```bash
+git clone https://github.com/YusufBeratZengin/subtitle-tools.git
+cd subtitle-tools
 pip install -e ".[dev]"
+pytest
 ```
 
-## CLI Kullanım Kılavuzu (`subtool`)
+## Kullanım Örnekleri
 
-### Format dönüştürme
+### CLI Kullanım Kılavuzu (`subtool`)
+
+#### Format dönüştürme
 ```bash
 # Dosya uzantısına göre otomatik dönüştürme
 subtool convert giris.srt cikis.vtt
@@ -58,7 +58,7 @@ subtool convert giris.vtt cikis.ass
 subtool convert giris.txt cikis.vtt --from-format srt --to-format vtt
 ```
 
-### Zaman kaydırma
+#### Zaman kaydırma
 ```bash
 # 1500 milisaniye ileri kaydırma
 subtool shift giris.srt -o kaydirilmis.srt --by 1500ms
@@ -73,7 +73,7 @@ subtool shift giris.srt -o kaydirilmis.srt --to 00:01:00.000
 subtool shift giris.srt --in-place --by 500ms
 ```
 
-### Kare hızı / zaman ölçekleme
+#### Kare hızı / zaman ölçekleme
 ```bash
 # 23.976 fps'ten 25 fps'e dönüştürme (PAL hızlandırması)
 subtool scale giris.srt -o olcekli.srt --from-fps 23.976 --to-fps 25
@@ -85,7 +85,7 @@ subtool scale giris.srt -o olcekli.srt --from-fps 25 --to-fps 23.976
 subtool scale giris.srt -o olcekli.srt --factor 1.05
 ```
 
-### Çift dilli altyazı birleştirme
+#### Çift dilli altyazı birleştirme
 ```bash
 # İngilizce ve Türkçe altyazıları üst üste bindirilmiş çift dil olarak birleştirme
 subtool merge ingilizce.srt turkce.srt -o cift_dil.srt
@@ -94,7 +94,7 @@ subtool merge ingilizce.srt turkce.srt -o cift_dil.srt
 subtool merge ingilizce.srt turkce.srt -o cift_dil.srt --separator " | "
 ```
 
-### Süreye göre bölme
+#### Süreye göre bölme
 ```bash
 # 20 dakikalık parçalara bölme
 subtool split giris.srt --duration 20m -o parca
@@ -103,24 +103,24 @@ subtool split giris.srt --duration 20m -o parca
 subtool split giris.srt --duration 1200s
 ```
 
-### Dosyaları birleştirme
+#### Dosyaları birleştirme
 ```bash
 # Dosyalar arasına 1 saniye boşluk koyarak sıralı birleştirme
 subtool join parca1.srt parca2.srt parca3.srt -o tam.srt --gap 1000ms
 ```
 
-### Yeniden numaralandırma
+#### Yeniden numaralandırma
 ```bash
 subtool renumber giris.srt -o numarali.srt --start 1
 ```
 
-### Biçimlendirme etiketlerini temizleme
+#### Biçimlendirme etiketlerini temizleme
 ```bash
 # <i>, <b>, <font> ve ASS stil geçersiz kılma etiketlerini kaldırma
 subtool strip-tags giris.srt -o temiz.srt
 ```
 
-### Lint ve otomatik onarım
+#### Lint ve otomatik onarım
 ```bash
 # Dosyaları denetleme ve rapor üretme
 subtool lint *.srt
@@ -135,12 +135,54 @@ subtool lint *.srt --fix
 subtool lint *.srt --max-cps 18 --max-line-length 40 --max-lines 2 --min-duration 400
 ```
 
-### Altyazı dosyası bilgilerini inceleme
+#### Altyazı dosyası bilgilerini inceleme
 ```bash
 subtool info *.srt *.vtt *.ass
 ```
 
-## Lint Kuralları
+### Python Kütüphane API'si
+
+`subtitle-tools`, Python projelerinde doğrudan içe aktarılarak kullanılabilir:
+
+```python
+from subtitle_tools import parse, write, shift, merge, lint_document, LintConfig
+
+# Altyazı dosyasını ayrıştırma
+with open("giris.srt", "r", encoding="utf-8") as f:
+    doc = parse(f.read(), fmt="srt")
+
+# İpuçlarını 1.5 saniye ileri kaydırma
+kaydirilmis = shift(doc, by_ms=1500)
+
+# Özel eşik değerleriyle belgeyi denetleme
+config = LintConfig(max_cps=17.0, max_line_length=42)
+sorunlar = lint_document(kaydirilmis, config=config)
+
+for sorun in sorunlar:
+    print(f"[{sorun.severity.upper()}] {sorun.rule_id}: {sorun.message}")
+
+# WebVTT formatında serileştirme
+vtt_metin = write(kaydirilmis, fmt="vtt")
+```
+
+## Yapılandırma
+
+### Lint Parametreleri ve Eşik Değerleri
+
+`subtool lint` komutu çalıştırılırken aşağıdaki parametrelerle denetim eşikleri ayarlanabilir:
+
+| CLI Parametresi | Varsayılan | Açıklama |
+| --------------- | ---------- | -------- |
+| `--max-cps` | `17.0` | Saniyedeki azami karakter okuma hızı eşiği (CPS). |
+| `--max-line-length` | `42` | Tek bir satırdaki azami karakter sayısı. |
+| `--max-lines` | `2` | Bir ipucunda izin verilen azami satır sayısı. |
+| `--min-duration` | `500` | Asgari ipucu süresi (milisaniye cinsinden). |
+| `--max-duration` | `7000` | Azami ipucu süresi (milisaniye cinsinden). |
+| `--fix` | `False` | Güvenli hataları dosya üzerinde otomatik olarak düzeltir. |
+| `--strict` | `False` | Uyarılarda da hata çıkış kodu (exit code 1) döndürür. |
+| `--format` | `text` | Çıktı formatı (terminal için `text`, otomasyon/CI için `json`). |
+
+### Lint Kuralları
 
 | Kural ID | Seviye | Açıklama | `--fix` ile Onarılabilir |
 | -------- | ------ | -------- | ------------------------ |
@@ -156,7 +198,7 @@ subtool info *.srt *.vtt *.ass
 | `unbalanced-tags` | Hata | Kapatılmamış veya eşleşmeyen HTML/VTT/ASS etiketleri. | Evet (kapatılır veya temizlenir) |
 | `encoding-issue` | Uyarı | UTF-8 BOM varlığı veya karışık CRLF/LF satır sonları. | Evet (normalize edilir) |
 
-## Kodlama Algılama Sırası
+### Kodlama Algılama Sırası
 
 Açık bir `--encoding` parametresi verilmediğinde, `subtitle-tools` aşağıdaki sırayı takip eder:
 
@@ -166,46 +208,44 @@ Açık bir `--encoding` parametresi verilmediğinde, `subtitle-tools` aşağıda
 4. **`cp1254`**: CP1252 tanımsız baytlar nedeniyle başarısız olursa Windows-1254 denenir.
 5. **`latin-1`**: Tüm baytları (0x00 - 0xFF) hatasız eşleyen ISO-8859-1 son çare olarak kullanılır.
 
-## Python Kütüphane API'si
+## SSS ve Kısıtlamalar
 
-```python
-from subtitle_tools import parse, write, shift, merge, lint_document, LintConfig
+**S: Hangi altyazı formatları desteklenmektedir?**  
+C: `subtitle-tools`, metin tabanlı SubRip (`.srt`), WebVTT (`.vtt`) ve SubStation Alpha / Advanced SubStation Alpha (`.ass`, `.ssa`) formatlarını destekler.
 
-# Altyazı dosyasını ayrıştırma
-with open("giris.srt", "r", encoding="utf-8") as f:
-    doc = parse(f.read(), fmt="srt")
+**S: Bitmap veya resim tabanlı altyazılar (PGS / SUP, VobSub `.sub`/`.idx`) destekleniyor mu?**  
+C: Hayır. `subtitle-tools` yalnızca metin tabanlı altyazılara odaklanmıştır. Blu-ray PGS veya DVD VobSub gibi raster görüntüler için öncelikle Subtitle Edit veya Tesseract gibi OCR araçlarıyla metne dönüştürme yapılmalıdır.
 
-# İpuçlarını 1.5 saniye ileri kaydırma
-kaydirilmis = shift(doc, by_ms=1500)
+**S: Otomatik onarım motoru neleri güvenli olarak değiştirir?**  
+C: `--fix`, yalnızca belirsizlik içermeyen durumları onarır: tamamen boş ipuçlarını siler, kapatılmamış veya bozuk HTML/ASS etiketlerini kapatır, satır sonlarını normalize eder, küçük zamanlama çakışmalarını düzeltir ve negatif/sıfır süreleri tamir eder. Metin kısaltma veya okuma hızı gibi yoruma dayalı durumlar ise kullanıcının kararına bırakılır.
 
-# Belgeyi lint etme
-config = LintConfig(max_cps=17.0, max_line_length=42)
-sorunlar = lint_document(kaydirilmis, config=config)
+**S: Harici paket kurmadan sunucusuz (serverless) veya hafif ortamlarda çalışabilir mi?**  
+C: Evet. `subtitle-tools`, hiçbir üçüncü taraf çalışma zamanı kütüphanesine ihtiyaç duymaz. Yalnızca standart bir Python 3.10+ ortamı yeterlidir.
 
-for sorun in sorunlar:
-    print(f"[{sorun.severity.upper()}] {sorun.rule_id}: {sorun.message}")
+## Katkıda Bulunma
 
-# WebVTT formatında serileştirme
-vtt_metin = write(kaydirilmis, fmt="vtt")
-```
+Katkılarınızı memnuniyetle kabul ediyoruz! Geliştirme iş akışı, kodlama standartları ve detaylar için lütfen [CONTRIBUTING.md](CONTRIBUTING.md) belgesini inceleyin.
 
-## Testleri Çalıştırma
+### Testleri ve Kalite Denetimlerini Çalıştırma
 
-Testler hiçbir harici paket gerektirmeden standart `unittest` ile çalıştırılabilir:
-
-```bash
-python -m unittest discover -s tests
-```
-
-Veya `pytest` ile:
+Kapsam raporu ile testleri çalıştırma:
 
 ```bash
 pytest
 ```
 
-## Katkıda Bulunma
+Linter ve statik tip denetleyicisini çalıştırma:
 
-Geliştirme yönergeleri ve iş akışı için lütfen [CONTRIBUTING.md](CONTRIBUTING.md) dosyasını inceleyin.
+```bash
+ruff check .
+mypy src
+```
+
+Testler standart Python `unittest` ile hiçbir harici paket olmadan da çalıştırılabilir:
+
+```bash
+python -m unittest discover -s tests
+```
 
 ## Lisans
 
