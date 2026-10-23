@@ -296,7 +296,11 @@ def cmd_lint(args: argparse.Namespace) -> int:
         sys.stdout.write(json.dumps(results, indent=2) + "\n")
     else:
         for item in results:
-            path_str = item["file"]
+            file_p = Path(item["file"])
+            try:
+                path_str = str(file_p.relative_to(Path.cwd()))
+            except (ValueError, RuntimeError):
+                path_str = str(file_p)
             file_issues = item["issues"]
             fixes = item["fixes_applied"]
 
