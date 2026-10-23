@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 562" width="780" height="562" font-family="ui-monospace, 'Cascadia Code', 'SF Mono', Consolas, 'Liberation Mono', Menlo, monospace" font-size="13">
+  <defs>
+    <linearGradient id="headerGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#181825"/>
+      <stop offset="100%" stop-color="#1e1e2e"/>
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000000" flood-opacity="0.45"/>
+    </filter>
+  </defs>
+  <rect width="780" height="562" rx="10" fill="#181825" stroke="#313244" stroke-width="1" filter="url(#shadow)"/>
+  <path d="M0 10C0 4.477 4.477 0 10 0h760c5.523 0 10 4.477 10 10v28H0V10z" fill="url(#headerGrad)"/>
+  <line x1="0" y1="38" x2="780" y2="38" stroke="#313244" stroke-width="1"/>
+  <!-- Window Controls -->
+  <circle cx="24" cy="19" r="6" fill="#f38ba8"/>
+  <circle cx="44" cy="19" r="6" fill="#f9e2af"/>
+  <circle cx="64" cy="19" r="6" fill="#a6e3a1"/>
+  <text x="390" y="23" fill="#6c7086" font-size="12" font-weight="500" text-anchor="middle">subtool — terminal</text>
+  <!-- Terminal Output -->
+  <text x="24" y="58" xml:space="preserve"><tspan fill="#a6e3a1" font-weight="600">$</tspan> <tspan fill="#f5c2e7" font-weight="600">subtool</tspan> <tspan fill="#89dceb">lint movie.srt</tspan></text>
+  <text x="24" y="80" xml:space="preserve"><tspan fill="#cdd6f4" font-weight="700">movie.srt:</tspan></text>
+  <text x="24" y="102" xml:space="preserve">  <tspan fill="#f38ba8" font-weight="700">[ERROR]</tspan> <tspan fill="#89b4fa" font-weight="600">unbalanced-tags</tspan><tspan fill="#6c7086"> [Cue #1]</tspan><tspan fill="#bac2de">: Unbalanced tags: Unclosed tag(s): &lt;i&gt;</tspan></text>
+  <text x="24" y="124" xml:space="preserve">  <tspan fill="#f9e2af" font-weight="700">[WARNING]</tspan> <tspan fill="#89b4fa" font-weight="600">line-length</tspan><tspan fill="#6c7086"> [Cue #1]</tspan><tspan fill="#bac2de">: Line 1 length (51 chars) exceeds maximum (42)</tspan></text>
+  <text x="24" y="146" xml:space="preserve">  <tspan fill="#f38ba8" font-weight="700">[ERROR]</tspan> <tspan fill="#89b4fa" font-weight="600">overlap</tspan><tspan fill="#6c7086"> [Cue #2]</tspan><tspan fill="#bac2de">: Cue overlaps previous cue by 500ms (starts at 3500ms, previous ended at 4000ms)</tspan></text>
+  <text x="24" y="168" xml:space="preserve">  <tspan fill="#f38ba8" font-weight="700">[ERROR]</tspan> <tspan fill="#89b4fa" font-weight="600">zero-duration</tspan><tspan fill="#6c7086"> [Cue #3]</tspan><tspan fill="#bac2de">: Cue duration is zero (7000ms to 7000ms)</tspan></text>
+  <text x="24" y="190" xml:space="preserve">  <tspan fill="#f38ba8" font-weight="700">[ERROR]</tspan> <tspan fill="#89b4fa" font-weight="600">empty-cue</tspan><tspan fill="#6c7086"> [Cue #3]</tspan><tspan fill="#bac2de">: Cue text is empty or contains only formatting/whitespace</tspan></text>
+  <text x="24" y="212" xml:space="preserve">  <tspan fill="#f38ba8" font-weight="700">[ERROR]</tspan> <tspan fill="#89b4fa" font-weight="600">negative-duration</tspan><tspan fill="#6c7086"> [Cue #4]</tspan><tspan fill="#bac2de">: Cue end time (8000ms) is before start time (9000ms)</tspan></text>
+  <text x="24" y="234" xml:space="preserve"></text>
+  <text x="24" y="256" xml:space="preserve"><tspan fill="#a6e3a1" font-weight="600">$</tspan> <tspan fill="#f5c2e7" font-weight="600">subtool</tspan> <tspan fill="#89dceb">lint movie.srt --fix</tspan></text>
+  <text x="24" y="278" xml:space="preserve"><tspan fill="#cdd6f4" font-weight="700">movie.srt:</tspan></text>
+  <text x="24" y="300" xml:space="preserve"><tspan fill="#a6e3a1" font-weight="600">  Fixed 4 issue(s) automatically</tspan></text>
+  <text x="24" y="322" xml:space="preserve">  <tspan fill="#f9e2af" font-weight="700">[WARNING]</tspan> <tspan fill="#89b4fa" font-weight="600">cps-limit</tspan><tspan fill="#6c7086"> [Cue #1]</tspan><tspan fill="#bac2de">: Reading speed 20.4 cps exceeds limit (17.0 cps)</tspan></text>
+  <text x="24" y="344" xml:space="preserve">  <tspan fill="#f9e2af" font-weight="700">[WARNING]</tspan> <tspan fill="#89b4fa" font-weight="600">line-length</tspan><tspan fill="#6c7086"> [Cue #1]</tspan><tspan fill="#bac2de">: Line 1 length (51 chars) exceeds maximum (42)</tspan></text>
+  <text x="24" y="366" xml:space="preserve">  <tspan fill="#f9e2af" font-weight="700">[WARNING]</tspan> <tspan fill="#89b4fa" font-weight="600">cps-limit</tspan><tspan fill="#6c7086"> [Cue #3]</tspan><tspan fill="#bac2de">: Reading speed 26.0 cps exceeds limit (17.0 cps)</tspan></text>
+  <text x="24" y="388" xml:space="preserve"></text>
+  <text x="24" y="410" xml:space="preserve"><tspan fill="#a6e3a1" font-weight="600">$</tspan> <tspan fill="#f5c2e7" font-weight="600">subtool</tspan> <tspan fill="#89dceb">info movie.srt</tspan></text>
+  <text x="24" y="432" xml:space="preserve"><tspan fill="#cdd6f4" font-weight="700">movie.srt:</tspan></text>
+  <text x="24" y="454" xml:space="preserve">  <tspan fill="#89b4fa" font-weight="600">Format:</tspan>   <tspan fill="#cdd6f4">SRT</tspan></text>
+  <text x="24" y="476" xml:space="preserve">  <tspan fill="#89b4fa" font-weight="600">Encoding:</tspan> <tspan fill="#cdd6f4">utf-8</tspan></text>
+  <text x="24" y="498" xml:space="preserve">  <tspan fill="#89b4fa" font-weight="600">Cues:</tspan>     <tspan fill="#cdd6f4">3</tspan></text>
+  <text x="24" y="520" xml:space="preserve">  <tspan fill="#89b4fa" font-weight="600">Duration:</tspan> <tspan fill="#cdd6f4">00:00:09,000 (9000ms)</tspan></text>
+</svg>
