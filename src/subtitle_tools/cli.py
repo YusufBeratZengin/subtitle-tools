@@ -11,6 +11,7 @@ from collections.abc import Sequence
 from pathlib import Path
 from typing import Any, NoReturn, TypedDict
 
+from subtitle_tools import __version__
 from subtitle_tools.encoding import read_subtitle_file, write_subtitle_file
 from subtitle_tools.lint import LintConfig, fix_document, lint_document
 from subtitle_tools.operations import (
@@ -40,6 +41,7 @@ from subtitle_tools.operations import (
 from subtitle_tools.operations.scale import parse_fps
 from subtitle_tools.parsers import guess_format, parse, write
 from subtitle_tools.time import format_srt_time, parse_time
+from subtitle_tools.transcribe.cli import add_parser as add_transcribe_parser
 
 
 class _ArgumentParser(argparse.ArgumentParser):
@@ -391,6 +393,7 @@ def build_parser() -> argparse.ArgumentParser:
         prog="subtool",
         description="A zero-dependency Python CLI to convert, fix, and lint subtitle files (SRT, WebVTT, ASS).",
     )
+    parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     # convert
@@ -490,6 +493,9 @@ def build_parser() -> argparse.ArgumentParser:
     p_info.add_argument("files", nargs="+", help="Subtitle files or glob patterns")
     p_info.add_argument("--encoding", help="File encoding")
     p_info.set_defaults(func=cmd_info)
+
+    # transcribe (optional extra; faster-whisper is imported lazily)
+    add_transcribe_parser(subparsers)
 
     return parser
 

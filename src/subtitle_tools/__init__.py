@@ -35,7 +35,7 @@ from subtitle_tools.time import (
 )
 from subtitle_tools.types import AssStyle, Cue, SubtitleDocument
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 __all__ = [
     "ENCODING_FALLBACK_ORDER",
