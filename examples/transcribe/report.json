@@ -1,0 +1,18 @@
+{
+  "version": "0.2.0",
+  "language": "tr",
+  "duration": 7.2,
+  "device": "cpu",
+  "compute_type": "int8",
+  "cue_count": 3,
+  "confidence_threshold": 0.6,
+  "low_confidence_words": [
+    {
+      "start": 3.68,
+      "end": 4.1,
+      "text": "çünkü",
+      "prob": 0.55
+    }
+  ],
+  "layout_warnings": []
+}

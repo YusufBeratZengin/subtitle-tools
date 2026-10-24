@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 984 444" width="984" height="444" role="img" aria-label="subtool transcribe: real CLI output and generated SRT cues">
+  <defs>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="6" stdDeviation="12" flood-color="#000000" flood-opacity="0.4"/>
+    </filter>
+  </defs>
+
+  <!-- Terminal Window Background -->
+  <rect x="1" y="1" width="982" height="442" rx="10" ry="10" fill="#0d1117" stroke="#30363d" stroke-width="1.2" filter="url(#shadow)"/>
+
+  <!-- Window Header / Title Bar -->
+  <path d="M 1 11 A 10 10 0 0 1 11 1 L 973 1 A 10 10 0 0 1 983 11 L 983 40 L 1 40 Z" fill="#161b22"/>
+  <line x1="1" y1="40" x2="983" y2="40" stroke="#30363d" stroke-width="1"/>
+
+  <!-- Window Controls (3 dots: Red, Yellow, Green) -->
+  <circle cx="20" cy="20" r="5.5" fill="#ff5f56" stroke="#e0443e" stroke-width="0.5"/>
+  <circle cx="38" cy="20" r="5.5" fill="#ffbd2e" stroke="#dea123" stroke-width="0.5"/>
+  <circle cx="56" cy="20" r="5.5" fill="#27c93f" stroke="#1aab29" stroke-width="0.5"/>
+
+  <!-- Centered Window Title -->
+  <text x="492" y="24" text-anchor="middle" fill="#8b949e" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="500">subtool transcribe — terminal</text>
+
+  <!-- Monospace Terminal Lines -->
+  <g font-family="ui-monospace, 'SF Mono', 'Cascadia Code', 'Fira Code', Menlo, Consolas, monospace" font-size="13" xml:space="preserve">
+  <text x="24" y="68"><tspan fill="#3fb950" font-weight="bold">$ subtool transcribe --words-json examples/transcribe/sample.words.json -o captions --format all --mode words --upper</tspan></text>
+  <text x="24" y="88"><tspan fill="#c9d1d9">Created 3 subtitle cues.</tspan></text>
+  <text x="24" y="128"><tspan fill="#8b949e"># captions.srt (first 3 cues)</tspan></text>
+  <text x="24" y="148"><tspan fill="#c9d1d9">1</tspan></text>
+  <text x="24" y="168"><tspan fill="#79c0ff">00:00:00,000 --&gt; 00:00:02,050</tspan></text>
+  <text x="24" y="188"><tspan fill="#c9d1d9">BUGÜN DİKEY</tspan></text>
+  <text x="24" y="208"><tspan fill="#c9d1d9">VİDEOLAR İÇİN</tspan></text>
+  <text x="24" y="248"><tspan fill="#c9d1d9">2</tspan></text>
+  <text x="24" y="268"><tspan fill="#79c0ff">00:00:02,120 --&gt; 00:00:04,100</tspan></text>
+  <text x="24" y="288"><tspan fill="#c9d1d9">ALTYAZI</tspan></text>
+  <text x="24" y="308"><tspan fill="#c9d1d9">HAZIRLIYORUZ ÇÜNKÜ</tspan></text>
+  <text x="24" y="348"><tspan fill="#c9d1d9">3</tspan></text>
+  <text x="24" y="368"><tspan fill="#79c0ff">00:00:04,180 --&gt; 00:00:07,100</tspan></text>
+  <text x="24" y="388"><tspan fill="#c9d1d9">İYİ IŞIK VE NET</tspan></text>
+  <text x="24" y="408"><tspan fill="#c9d1d9">SES ÇOK ÖNEMLİ.</tspan></text>
+  </g>
+</svg>

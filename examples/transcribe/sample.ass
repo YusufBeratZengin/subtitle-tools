@@ -1,0 +1,38 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default,DejaVu Sans,72,&H00FFFFFF,&H0000FFFF,&H00000000,&H80000000,-1,0,0,0,100,100,0,0,1,4,0,2,60,60,320,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:00.42,Default,,0,0,0,,{\1c&H00FFFF&\1a&H00&}BUGÜN{\rDefault} DİKEY\NVİDEOLAR İÇİN
+Dialogue: 0,0:00:00.42,0:00:00.48,Default,,0,0,0,,BUGÜN DİKEY\NVİDEOLAR İÇİN
+Dialogue: 0,0:00:00.48,0:00:00.95,Default,,0,0,0,,BUGÜN {\1c&H00FFFF&\1a&H00&}DİKEY{\rDefault}\NVİDEOLAR İÇİN
+Dialogue: 0,0:00:00.95,0:00:01.02,Default,,0,0,0,,BUGÜN DİKEY\NVİDEOLAR İÇİN
+Dialogue: 0,0:00:01.02,0:00:01.60,Default,,0,0,0,,BUGÜN DİKEY\N{\1c&H00FFFF&\1a&H00&}VİDEOLAR{\rDefault} İÇİN
+Dialogue: 0,0:00:01.60,0:00:01.68,Default,,0,0,0,,BUGÜN DİKEY\NVİDEOLAR İÇİN
+Dialogue: 0,0:00:01.68,0:00:02.05,Default,,0,0,0,,BUGÜN DİKEY\NVİDEOLAR {\1c&H00FFFF&\1a&H00&}İÇİN{\rDefault}
+Dialogue: 0,0:00:02.12,0:00:02.75,Default,,0,0,0,,{\1c&H00FFFF&\1a&H00&}ALTYAZI{\rDefault}\NHAZIRLIYORUZ ÇÜNKÜ
+Dialogue: 0,0:00:02.75,0:00:02.82,Default,,0,0,0,,ALTYAZI\NHAZIRLIYORUZ ÇÜNKÜ
+Dialogue: 0,0:00:02.82,0:00:03.55,Default,,0,0,0,,ALTYAZI\N{\1c&H00FFFF&\1a&H00&}HAZIRLIYORUZ{\rDefault} ÇÜNKÜ
+Dialogue: 0,0:00:03.55,0:00:03.68,Default,,0,0,0,,ALTYAZI\NHAZIRLIYORUZ ÇÜNKÜ
+Dialogue: 0,0:00:03.68,0:00:04.10,Default,,0,0,0,,ALTYAZI\NHAZIRLIYORUZ {\1c&H00FFFF&\1a&H00&}ÇÜNKÜ{\rDefault}
+Dialogue: 0,0:00:04.18,0:00:04.52,Default,,0,0,0,,{\1c&H00FFFF&\1a&H00&}İYİ{\rDefault} IŞIK VE NET\NSES ÇOK ÖNEMLİ.
+Dialogue: 0,0:00:04.52,0:00:04.58,Default,,0,0,0,,İYİ IŞIK VE NET\NSES ÇOK ÖNEMLİ.
+Dialogue: 0,0:00:04.58,0:00:04.95,Default,,0,0,0,,İYİ {\1c&H00FFFF&\1a&H00&}IŞIK{\rDefault} VE NET\NSES ÇOK ÖNEMLİ.
+Dialogue: 0,0:00:04.95,0:00:05.02,Default,,0,0,0,,İYİ IŞIK VE NET\NSES ÇOK ÖNEMLİ.
+Dialogue: 0,0:00:05.02,0:00:05.25,Default,,0,0,0,,İYİ IŞIK {\1c&H00FFFF&\1a&H00&}VE{\rDefault} NET\NSES ÇOK ÖNEMLİ.
+Dialogue: 0,0:00:05.25,0:00:05.30,Default,,0,0,0,,İYİ IŞIK VE NET\NSES ÇOK ÖNEMLİ.
+Dialogue: 0,0:00:05.30,0:00:05.62,Default,,0,0,0,,İYİ IŞIK VE {\1c&H00FFFF&\1a&H00&}NET{\rDefault}\NSES ÇOK ÖNEMLİ.
+Dialogue: 0,0:00:05.62,0:00:05.68,Default,,0,0,0,,İYİ IŞIK VE NET\NSES ÇOK ÖNEMLİ.
+Dialogue: 0,0:00:05.68,0:00:06.05,Default,,0,0,0,,İYİ IŞIK VE NET\N{\1c&H00FFFF&\1a&H00&}SES{\rDefault} ÇOK ÖNEMLİ.
+Dialogue: 0,0:00:06.05,0:00:06.12,Default,,0,0,0,,İYİ IŞIK VE NET\NSES ÇOK ÖNEMLİ.
+Dialogue: 0,0:00:06.12,0:00:06.45,Default,,0,0,0,,İYİ IŞIK VE NET\NSES {\1c&H00FFFF&\1a&H00&}ÇOK{\rDefault} ÖNEMLİ.
+Dialogue: 0,0:00:06.45,0:00:06.50,Default,,0,0,0,,İYİ IŞIK VE NET\NSES ÇOK ÖNEMLİ.
+Dialogue: 0,0:00:06.50,0:00:07.10,Default,,0,0,0,,İYİ IŞIK VE NET\NSES ÇOK {\1c&H00FFFF&\1a&H00&}ÖNEMLİ.{\rDefault}

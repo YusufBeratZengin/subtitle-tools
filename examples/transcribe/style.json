@@ -1,0 +1,11 @@
+{
+  "font": "DejaVu Sans",
+  "font_size": 72,
+  "primary_color": "&H00FFFFFF",
+  "highlight_color": "&H0000FFFF",
+  "outline_color": "&H00000000",
+  "outline": 4,
+  "bold": true,
+  "position": "bottom",
+  "margin_v": 320
+}
