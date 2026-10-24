@@ -1,12 +1,79 @@
 """Unit tests for the CLI interface (subtool)."""
 
+import io
 import json
+import os
+import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
 from unittest.mock import patch
 
 from subtitle_tools.cli import main
+
+
+class TestCliUsageErrors(unittest.TestCase):
+    """Usage errors are checked in subprocesses against a read-only fixture."""
+
+    srt_file = Path(__file__).resolve().parent / "fixtures" / "sample.srt"
+
+    def _assert_usage_error(self, command: str, *options: str) -> None:
+        env = os.environ.copy()
+        env["PYTHONPATH"] = str(Path(__file__).resolve().parents[1] / "src")
+        result = subprocess.run(
+            [sys.executable, "-m", "subtitle_tools", command, str(self.srt_file), *options],
+            capture_output=True,
+            text=True,
+            env=env,
+            check=False,
+        )
+        self.assertEqual(result.returncode, 2, result.stderr)
+        self.assertNotIn("Traceback", result.stderr)
+        self.assertTrue(result.stderr.startswith(f"subtool {command}: error: "), result.stderr)
+        self.assertEqual(len(result.stderr.splitlines()), 1)
+        self.assertEqual(result.stdout, "")
+
+    def test_cli_shift_requires_mode(self) -> None:
+        self._assert_usage_error("shift")
+
+    def test_cli_shift_bad_timestamp(self) -> None:
+        self._assert_usage_error("shift", "--by", "abc")
+
+    def test_cli_scale_requires_mode(self) -> None:
+        self._assert_usage_error("scale")
+
+    def test_cli_convert_unknown_extension(self) -> None:
+        output = self.srt_file.with_suffix(".xyz")
+        self._assert_usage_error("convert", str(output))
+        self.assertFalse(output.exists())
+
+    def test_cli_invalid_option_combinations_and_values(self) -> None:
+        cases = [
+            ("shift", ["--by", "1s", "--to", "2s"]),
+            ("shift", ["--to", "abc"]),
+            ("shift", ["--by", "inf"]),
+            ("scale", ["--from-fps", "24"]),
+            ("scale", ["--to-fps", "25"]),
+            ("scale", ["--factor", "2", "--from-fps", "24"]),
+            ("scale", ["--factor", "2", "--to-fps", "25"]),
+            ("scale", ["--from-fps", "abc", "--to-fps", "25"]),
+            ("scale", ["--from-fps", "24", "--to-fps", "0"]),
+            ("scale", ["--from-fps", "nan", "--to-fps", "25"]),
+            ("scale", ["--factor", "abc"]),
+            ("scale", ["--factor", "0"]),
+            ("scale", ["--factor", "inf"]),
+        ]
+        for command, options in cases:
+            with self.subTest(command=command, options=options):
+                with (
+                    patch("sys.stderr", new_callable=io.StringIO) as stderr,
+                    self.assertRaises(SystemExit) as raised,
+                ):
+                    main([command, str(self.srt_file), *options])
+                self.assertEqual(raised.exception.code, 2)
+                self.assertNotIn("Traceback", stderr.getvalue())
+                self.assertTrue(stderr.getvalue().startswith(f"subtool {command}: error: "))
 
 
 class TestCli(unittest.TestCase):
@@ -56,6 +123,35 @@ class TestCli(unittest.TestCase):
         self.assertEqual(code, 0)
         content = out_srt.read_text(encoding="utf-8")
         self.assertIn("00:00:02,000 --> 00:00:08,000", content)
+
+    def test_cli_scale_fps_pair(self) -> None:
+        output = self.path / "scaled.srt"
+        self.assertEqual(main([
+            "scale", str(self.srt_file), "--from-fps", "24", "--to-fps", "25", "-o", str(output),
+        ]), 0)
+        self.assertIn("00:00:00,960 --> 00:00:03,840", output.read_text(encoding="utf-8"))
+
+    def test_cli_shift_zero_alignment(self) -> None:
+        output = self.path / "aligned.srt"
+        self.assertEqual(main(["shift", str(self.srt_file), "--to", "0ms", "-o", str(output)]), 0)
+        self.assertIn("00:00:00,000 --> 00:00:03,000", output.read_text(encoding="utf-8"))
+
+    def test_cli_data_error(self) -> None:
+        self.srt_file.write_bytes(b"\xff")
+        with patch("sys.stderr", new_callable=io.StringIO) as stderr:
+            code = main(["convert", str(self.srt_file), str(self.path / "out.vtt"), "--encoding", "utf-8"])
+        self.assertEqual(code, 1)
+        self.assertTrue(stderr.getvalue().startswith("subtool convert: error: "))
+        self.assertNotIn("Traceback", stderr.getvalue())
+
+    def test_cli_file_error(self) -> None:
+        with (
+            patch("subtitle_tools.cli.write_subtitle_file", side_effect=OSError("Cannot write output")),
+            patch("sys.stderr", new_callable=io.StringIO) as stderr,
+        ):
+            code = main(["convert", str(self.srt_file), str(self.path / "out.vtt")])
+        self.assertEqual(code, 1)
+        self.assertEqual(stderr.getvalue(), "subtool convert: error: Cannot write output\n")
 
     def test_cli_merge(self) -> None:
         out_merged = self.path / "merged.srt"

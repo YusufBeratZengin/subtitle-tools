@@ -5,10 +5,11 @@ from __future__ import annotations
 import argparse
 import glob
 import json
+import math
 import sys
 from collections.abc import Sequence
 from pathlib import Path
-from typing import Any, TypedDict
+from typing import Any, NoReturn, TypedDict
 
 from subtitle_tools.encoding import read_subtitle_file, write_subtitle_file
 from subtitle_tools.lint import LintConfig, fix_document, lint_document
@@ -36,8 +37,49 @@ from subtitle_tools.operations import (
 from subtitle_tools.operations import (
     strip_tags as op_strip_tags,
 )
+from subtitle_tools.operations.scale import parse_fps
 from subtitle_tools.parsers import guess_format, parse, write
-from subtitle_tools.time import format_srt_time, parse_offset, parse_time
+from subtitle_tools.time import format_srt_time, parse_time
+
+
+class _ArgumentParser(argparse.ArgumentParser):
+    def error(self, message: str) -> NoReturn:
+        self.exit(2, f"{self.prog}: error: {' '.join(message.splitlines())}\n")
+
+
+class _UsageError(ValueError):
+    """Invalid command-line format selection."""
+
+
+def _guess_cli_format(path: Path, content: str | None = None) -> str:
+    try:
+        return guess_format(path, content)
+    except ValueError as exc:
+        raise _UsageError(str(exc)) from exc
+
+
+def _positive_number(value: str) -> float:
+    number = float(value)
+    if not math.isfinite(number) or number <= 0:
+        raise argparse.ArgumentTypeError("must be a finite positive number")
+    return number
+
+
+def _timestamp(value: str) -> int:
+    try:
+        return parse_time(value)
+    except (ValueError, OverflowError) as exc:
+        raise argparse.ArgumentTypeError(str(exc)) from exc
+
+
+def _framerate(value: str) -> float:
+    try:
+        fps = parse_fps(value)
+    except ValueError as exc:
+        raise argparse.ArgumentTypeError(str(exc)) from exc
+    if not math.isfinite(fps) or fps <= 0:
+        raise argparse.ArgumentTypeError("framerate must be finite and positive")
+    return fps
 
 
 class _LintResult(TypedDict):
@@ -70,7 +112,7 @@ def _expand_globs(patterns: Sequence[str]) -> list[Path]:
 
 def _load_doc(path: Path, fmt: str | None = None, encoding: str | None = None):
     text, enc, has_bom, has_mixed_newlines = read_subtitle_file(path, encoding=encoding)
-    file_fmt = fmt or guess_format(path, text)
+    file_fmt = fmt or _guess_cli_format(path, text)
     doc = parse(text, file_fmt)
     doc.encoding = enc
     return doc, enc, has_bom, has_mixed_newlines
@@ -94,8 +136,8 @@ def cmd_convert(args: argparse.Namespace) -> int:
         sys.stderr.write(f"Error: Input file not found: {in_path}\n")
         return 1
 
-    from_fmt = args.from_format or guess_format(in_path)
-    to_fmt = args.to_format or guess_format(out_path)
+    from_fmt = args.from_format or _guess_cli_format(in_path)
+    to_fmt = args.to_format or _guess_cli_format(out_path)
 
     doc, _enc, _, _ = _load_doc(in_path, fmt=from_fmt, encoding=args.encoding)
     converted_doc = op_convert(doc, target_format=to_fmt)
@@ -113,10 +155,7 @@ def cmd_shift(args: argparse.Namespace) -> int:
 
     doc, _, _, _ = _load_doc(in_path, encoding=args.encoding)
 
-    by_ms = parse_offset(args.by) if args.by else None
-    to_ms = parse_time(args.to) if args.to else None
-
-    shifted_doc = op_shift(doc, by_ms=by_ms, to_ms=to_ms, drop_negative=args.drop_negative)
+    shifted_doc = op_shift(doc, by_ms=args.by, to_ms=args.to, drop_negative=args.drop_negative)
 
     out_p = Path(args.output).resolve() if args.output else None
     _save_doc(shifted_doc, out_p, in_place=args.in_place, original_path=in_path)
@@ -160,7 +199,7 @@ def cmd_merge(args: argparse.Namespace) -> int:
     sep = args.separator.replace(r"\n", "\n")
     merged_doc = op_merge(doc1, doc2, separator=sep, timing=args.timing)
 
-    out_fmt = guess_format(out_path)
+    out_fmt = _guess_cli_format(out_path)
     write_subtitle_file(out_path, write(merged_doc, out_fmt), encoding="utf-8")
     return 0
 
@@ -193,7 +232,7 @@ def cmd_join(args: argparse.Namespace) -> int:
         return 1
 
     out_path = Path(args.output).resolve()
-    gap = parse_time(args.gap) if args.gap else 0
+    gap = args.gap
 
     docs = []
     for f in files:
@@ -204,7 +243,7 @@ def cmd_join(args: argparse.Namespace) -> int:
         docs.append(d)
 
     joined_doc = op_join(docs, gap_ms=gap, shift_sequential=not args.no_shift)
-    out_fmt = guess_format(out_path)
+    out_fmt = _guess_cli_format(out_path)
     write_subtitle_file(out_path, write(joined_doc, out_fmt), encoding="utf-8")
     return 0
 
@@ -348,7 +387,7 @@ def cmd_info(args: argparse.Namespace) -> int:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(
+    parser = _ArgumentParser(
         prog="subtool",
         description="A zero-dependency Python CLI to convert, fix, and lint subtitle files (SRT, WebVTT, ASS).",
     )
@@ -368,8 +407,9 @@ def build_parser() -> argparse.ArgumentParser:
     p_shift.add_argument("input", help="Input subtitle file")
     p_shift.add_argument("-o", "--output", help="Output file path (default: stdout)")
     p_shift.add_argument("-i", "--in-place", action="store_true", help="Modify input file in place")
-    p_shift.add_argument("--by", help="Shift offset (e.g. +1500ms, -2s, 00:01:00.000)")
-    p_shift.add_argument("--to", help="Align first cue to this timestamp (e.g. 00:01:00.000)")
+    shift_mode = p_shift.add_mutually_exclusive_group(required=True)
+    shift_mode.add_argument("--by", type=_timestamp, help="Shift offset (e.g. +1500ms, -2s, 00:01:00.000)")
+    shift_mode.add_argument("--to", type=_timestamp, help="Align first cue to this timestamp (e.g. 00:01:00.000)")
     p_shift.add_argument("--drop-negative", action="store_true", help="Drop cues shifted before 0ms")
     p_shift.add_argument("--encoding", help="File encoding")
     p_shift.set_defaults(func=cmd_shift)
@@ -379,11 +419,12 @@ def build_parser() -> argparse.ArgumentParser:
     p_scale.add_argument("input", help="Input subtitle file")
     p_scale.add_argument("-o", "--output", help="Output file path (default: stdout)")
     p_scale.add_argument("-i", "--in-place", action="store_true", help="Modify input file in place")
-    p_scale.add_argument("--from-fps", help="Source framerate (e.g. 23.976, 25)")
-    p_scale.add_argument("--to-fps", help="Target framerate (e.g. 25, 23.976)")
-    p_scale.add_argument("--factor", type=float, help="Direct timing multiplier factor")
+    scale_mode = p_scale.add_mutually_exclusive_group(required=True)
+    scale_mode.add_argument("--from-fps", type=_framerate, help="Source framerate (e.g. 23.976, 25)")
+    p_scale.add_argument("--to-fps", type=_framerate, help="Target framerate (e.g. 25, 23.976)")
+    scale_mode.add_argument("--factor", type=_positive_number, help="Direct timing multiplier factor")
     p_scale.add_argument("--encoding", help="File encoding")
-    p_scale.set_defaults(func=cmd_scale)
+    p_scale.set_defaults(func=cmd_scale, command_parser=p_scale)
 
     # merge
     p_merge = subparsers.add_parser("merge", help="Merge two subtitle files into stacked dual-language cues")
@@ -398,7 +439,7 @@ def build_parser() -> argparse.ArgumentParser:
     # split
     p_split = subparsers.add_parser("split", help="Split subtitle file by duration intervals")
     p_split.add_argument("input", help="Input subtitle file")
-    p_split.add_argument("--duration", required=True, help="Chunk duration (e.g. 20m, 1200s, 00:20:00.000)")
+    p_split.add_argument("--duration", required=True, type=_timestamp, help="Chunk duration (e.g. 20m, 1200s, 00:20:00.000)")
     p_split.add_argument("-o", "--output", help="Output filename prefix")
     p_split.add_argument("--keep-absolute", action="store_true", help="Do not reset timestamps to 0 in split parts")
     p_split.add_argument("--encoding", help="File encoding")
@@ -408,7 +449,7 @@ def build_parser() -> argparse.ArgumentParser:
     p_join = subparsers.add_parser("join", help="Concatenate multiple subtitle files into one")
     p_join.add_argument("inputs", nargs="+", help="Subtitle files to concatenate")
     p_join.add_argument("-o", "--output", required=True, help="Output subtitle file path")
-    p_join.add_argument("--gap", default="0ms", help="Gap between consecutive files (e.g. 1000ms)")
+    p_join.add_argument("--gap", default="0ms", type=_timestamp, help="Gap between consecutive files (e.g. 1000ms)")
     p_join.add_argument("--no-shift", action="store_true", help="Do not shift subsequent files after preceding ends")
     p_join.add_argument("--encoding", help="File encoding")
     p_join.set_defaults(func=cmd_join)
@@ -456,7 +497,17 @@ def build_parser() -> argparse.ArgumentParser:
 def main(argv: Sequence[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
-    return args.func(args)
+    if args.command == "scale":
+        if args.factor is not None and args.to_fps is not None:
+            args.command_parser.error("--factor cannot be combined with --to-fps")
+        if args.from_fps is not None and args.to_fps is None:
+            args.command_parser.error("--from-fps requires --to-fps")
+    try:
+        return args.func(args)
+    except (ValueError, OSError, LookupError) as exc:
+        message = " ".join(str(exc).splitlines())
+        sys.stderr.write(f"subtool {args.command}: error: {message}\n")
+        return 2 if isinstance(exc, _UsageError) else 1
 
 
 if __name__ == "__main__":

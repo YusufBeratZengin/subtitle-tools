@@ -5,9 +5,9 @@
 [![Python 3.10+](https://img.shields.io/badge/python-%3E%3D3.10-blue.svg)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
-SubRip (`.srt`), WebVTT (`.vtt`) ve Advanced SubStation Alpha (`.ass` / `.ssa`) altyazı dosyalarını dönüştürmek, düzenlemek, onarmak ve denetlemek (lint) için sıfır bağımlılıklı Python komut satırı aracı ve kütüphanesi.
+[English](README.md) | [Turkce](README.tr.md)
 
-[English Documentation](README.md)
+SubRip (`.srt`), WebVTT (`.vtt`) ve Advanced SubStation Alpha (`.ass` / `.ssa`) altyazı dosyalarını dönüştürmek, düzenlemek, onarmak ve denetlemek (lint) için sıfır bağımlılıklı Python komut satırı aracı ve kütüphanesi.
 
 ![subtitle-tools demo](docs/demo.svg)
 
@@ -19,7 +19,9 @@ SubRip (`.srt`), WebVTT (`.vtt`) ve Advanced SubStation Alpha (`.ass` / `.ssa`) 
 
 ## Hızlı Başlangıç
 
-Pip ile kurun:
+İlk PyPI sürümü yayımlanana kadar depoyu klonlayıp kök dizininde `pip install -e .` çalıştırarak kurun.
+
+İlk PyPI sürümünden sonra pip ile kurun:
 
 ```bash
 # Paketi kurun
@@ -45,6 +47,17 @@ pytest
 ```
 
 ## Kullanım Örnekleri
+
+Örnekler: küçük SRT dosyası ve dönüştürülmüş WebVTT karşılığı için [examples/](examples/) dizinine bakın.
+Windows üzerinde gerçek çıktı (dönüştürme başarıyla tamamlandığında çıktı vermez):
+
+```console
+$ subtool lint examples/sample.srt
+
+examples\sample.srt:
+  No issues found.
+$ subtool convert examples/sample.srt examples/sample.vtt
+```
 
 ### CLI Kullanım Kılavuzu (`subtool`)
 

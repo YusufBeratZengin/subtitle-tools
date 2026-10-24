@@ -5,9 +5,9 @@
 [![Python 3.10+](https://img.shields.io/badge/python-%3E%3D3.10-blue.svg)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
-A zero-dependency Python CLI and library to convert, transform, fix, and lint subtitle files across SubRip (`.srt`), WebVTT (`.vtt`), and Advanced SubStation Alpha (`.ass` / `.ssa`).
+[English](README.md) | [Turkce](README.tr.md)
 
-[Türkçe Dokümantasyon](README.tr.md)
+A zero-dependency Python CLI and library to convert, transform, fix, and lint subtitle files across SubRip (`.srt`), WebVTT (`.vtt`), and Advanced SubStation Alpha (`.ass` / `.ssa`).
 
 ![subtitle-tools demo](docs/demo.svg)
 
@@ -19,7 +19,9 @@ A zero-dependency Python CLI and library to convert, transform, fix, and lint su
 
 ## Quick Start
 
-Install via pip:
+Until the first PyPI release, install from a clone by running `pip install -e .` in the repository root.
+
+After the first PyPI release, install via pip:
 
 ```bash
 # Install package
@@ -45,6 +47,17 @@ pytest
 ```
 
 ## Usage Examples
+
+Examples: see [examples/](examples/) for the small SRT sample and its converted WebVTT file.
+Real output on Windows (conversion succeeds silently):
+
+```console
+$ subtool lint examples/sample.srt
+
+examples\sample.srt:
+  No issues found.
+$ subtool convert examples/sample.srt examples/sample.vtt
+```
 
 ### CLI Reference (`subtool`)
 

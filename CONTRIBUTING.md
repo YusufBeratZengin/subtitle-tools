@@ -53,3 +53,28 @@ python -m unittest discover -s tests
 2. Ensure all tests pass.
 3. Add tests for any new features or bug fixes.
 4. Open a pull request against the `main` branch with a clear description of the change.
+
+## Releasing
+
+Before the first release, configure a PyPI pending publisher for
+`YusufBeratZengin/subtitle-tools`, workflow `publish.yml`, and environment `pypi`.
+Create the matching GitHub Actions environment. Publishing uses OIDC trusted
+publishing; no PyPI API token is stored in the repository or GitHub secrets.
+
+1. Update `CHANGELOG.md` and bump the version in `pyproject.toml` using SemVer.
+2. Run the checks and validate the distributions locally:
+
+   ```bash
+   ruff check .
+   mypy src
+   pytest
+   python -m build
+   twine check dist/*
+   ```
+
+3. Commit the release as `chore(release): vX.Y.Z`.
+4. Create the matching tag with `git tag vX.Y.Z` and push the release commit and tag
+   when authorized. The tag must match the version in `pyproject.toml`.
+5. The `Publish` workflow builds the distributions, transfers the `dist` artifact,
+   and publishes it to PyPI from the `pypi` environment. Confirm the resulting PyPI
+   release and update the README installation note after the first release.
