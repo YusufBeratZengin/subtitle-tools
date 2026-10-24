@@ -27,6 +27,21 @@ Optional development dependencies can be installed using `pip`:
 pip install -e ".[dev]"
 ```
 
+The `transcribe`, `ffmpeg`, and `yaml` extras are only needed to run
+`subtool transcribe` against real media. The test suite mocks faster-whisper and
+ffmpeg, blocks network access, and never downloads a model; keep it that way and use
+only invented phrases in transcription tests. faster-whisper must stay a lazy import
+so that the core package keeps zero runtime dependencies.
+
+Enable the local credential guard once per clone:
+```bash
+git config core.hooksPath .githooks
+```
+
+The pre-commit hook scans staged files for common credential patterns and prints
+paths only, never the matching content. It is a baseline guard: review the staged
+diff for personal data and credentials too, and do not bypass a failed hook.
+
 ### Running Tests
 You can run tests using `pytest`:
 ```bash
