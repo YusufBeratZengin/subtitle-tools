@@ -7,7 +7,7 @@
 
 [English](README.md) | [Turkce](README.tr.md)
 
-A zero-dependency Python CLI and library to convert, transform, fix, and lint subtitle files across SubRip (`.srt`), WebVTT (`.vtt`), and Advanced SubStation Alpha (`.ass` / `.ssa`).
+A zero-dependency Python CLI and library to convert, transform, fix, and lint subtitle files across SubRip (`.srt`), WebVTT (`.vtt`), and Advanced SubStation Alpha (`.ass` / `.ssa`). An optional extra adds offline, word-timed transcription for short vertical videos.
 
 ![subtitle-tools demo](docs/demo.svg)
 
@@ -16,6 +16,7 @@ A zero-dependency Python CLI and library to convert, transform, fix, and lint su
 - **Zero runtime dependencies**: Pure standard library Python >= 3.10. No binary wheels, FFmpeg installations, or bulky C extensions required.
 - **Multi-format round-trip fidelity**: Accurate bidirectional conversions across SubRip (`.srt`), WebVTT (`.vtt`), and ASS/SSA (`.ass`), preserving styles, cue settings, comments, and unknown sections verbatim.
 - **Built-in linting & auto-repair**: Automatically flags timing overlaps, zero/negative durations, line length limits, and reading speed (CPS) violations—and heals fixable issues safely with `--fix`.
+- **Optional offline transcription**: `pip install "subtitle-tools[transcribe]"` adds `subtool transcribe`, which turns local speech into word-timed SRT, WebVTT, and karaoke ASS with faster-whisper. No cloud API, no automatic model downloads, and Turkish-aware line breaking and casing.
 
 ## Quick Start
 
@@ -153,6 +154,33 @@ subtool lint *.srt --max-cps 18 --max-line-length 40 --max-lines 2 --min-duratio
 subtool info *.srt *.vtt *.ass
 ```
 
+#### Transcribe local media (optional extra)
+
+`subtool transcribe` creates word-timed subtitles for Shorts, Reels, and TikTok with
+[faster-whisper](https://github.com/SYSTRAN/faster-whisper), fully offline. It is an
+optional extra, so the core stays dependency-free:
+
+```bash
+pip install "subtitle-tools[transcribe]"         # add ffmpeg,yaml for --burn and YAML styles
+
+# Try it without a model, from the bundled word timings
+subtool transcribe --words-json examples/transcribe/sample.words.json -o captions --format all --mode words --upper
+
+# Transcribe a video with a locally cached model; karaoke ASS plus a confidence report
+subtool transcribe video.mp4 --model ./models/small -o captions --format all --mode words --report json
+
+# Burn the styled ASS into the video with local ffmpeg
+subtool transcribe video.mp4 --model ./models/small -o rendered --burn --style examples/transcribe/style.json
+```
+
+The model is never downloaded by the command: pass a cached model name or a local
+model directory. Output is written by the same SRT, WebVTT, and ASS writers as the
+rest of the toolkit, so `subtool lint` and `subtool shift` work on it directly. Full
+options, style file format, report schema, and Python API:
+[docs/transcribe.md](docs/transcribe.md).
+
+![subtool transcribe demo](docs/transcribe-demo.svg)
+
 ### Python Library API
 
 `subtitle-tools` can be imported directly in Python applications:
@@ -233,7 +261,10 @@ A: No. `subtitle-tools` is strictly focused on text-based subtitle manipulation.
 A: `--fix` only modifies unambiguous defects: it removes completely empty cues, closes unbalanced or dangling HTML/ASS formatting tags, normalizes mixed newlines, resolves slight overlaps within the configured threshold, and repairs negative/zero durations. Subjective issues (such as text length or CPS speed) are flagged for human review.
 
 **Q: Can I run this in serverless or lightweight container environments without installing third-party packages?**  
-A: Yes. `subtitle-tools` has zero third-party runtime dependencies. A standard Python 3.10+ interpreter is all that is required.
+A: Yes. `subtitle-tools` has zero third-party runtime dependencies. A standard Python 3.10+ interpreter is all that is required. Only the optional `transcribe` extra installs faster-whisper, and it is imported lazily when `subtool transcribe` actually transcribes media.
+
+**Q: What happened to `altyazi-tr`?**  
+A: It moved into this package as `subtool transcribe` (`pip install "subtitle-tools[transcribe]"`). The options are the same (the version is now `subtool --version`); outputs use the shared subtitle writers.
 
 ## Contributing
 

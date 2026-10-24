@@ -7,7 +7,7 @@
 
 [English](README.md) | [Turkce](README.tr.md)
 
-SubRip (`.srt`), WebVTT (`.vtt`) ve Advanced SubStation Alpha (`.ass` / `.ssa`) altyazı dosyalarını dönüştürmek, düzenlemek, onarmak ve denetlemek (lint) için sıfır bağımlılıklı Python komut satırı aracı ve kütüphanesi.
+SubRip (`.srt`), WebVTT (`.vtt`) ve Advanced SubStation Alpha (`.ass` / `.ssa`) altyazı dosyalarını dönüştürmek, düzenlemek, onarmak ve denetlemek (lint) için sıfır bağımlılıklı Python komut satırı aracı ve kütüphanesi. İsteğe bağlı bir ek paket, kısa dikey videolar için çevrimdışı ve kelime zamanlı altyazı üretimi de sağlar.
 
 ![subtitle-tools demo](docs/demo.svg)
 
@@ -16,6 +16,7 @@ SubRip (`.srt`), WebVTT (`.vtt`) ve Advanced SubStation Alpha (`.ass` / `.ssa`) 
 - **Sıfır çalışma zamanı bağımlılığı**: Yalnızca Python standart kütüphanesini (>= 3.10) kullanır. Harici C kütüphaneleri, FFmpeg ikilileri veya derleme adımları gerektirmez.
 - **Çoklu format desteği ve tam doğruluk**: SubRip (`.srt`), WebVTT (`.vtt`) ve ASS/SSA (`.ass`) arasında iki yönlü kayıpsız dönüştürme yapar; stilleri, ipucu ayarlarını, notları ve bilinmeyen bölümleri olduğu gibi korur.
 - **Dahili denetleme (lint) ve otomatik onarım**: Zamanlama çakışmalarını, sıfır/negatif süreleri, satır sınırlarını ve okuma hızı (CPS) aşımlarını tespit eder; güvenli sorunları `--fix` bayrağı ile tek adımda yerinde onarır.
+- **İsteğe bağlı çevrimdışı konuşma tanıma**: `pip install "subtitle-tools[transcribe]"` ile gelen `subtool transcribe`, yerel ses ve videodan faster-whisper ile kelime zamanlı SRT, WebVTT ve karaoke ASS üretir. Bulut API'si yok, model kendiliğinden indirilmez; satır bölme ve büyük harf çevrimi Türkçe kurallarına uyar.
 
 ## Hızlı Başlangıç
 
@@ -153,6 +154,33 @@ subtool lint *.srt --max-cps 18 --max-line-length 40 --max-lines 2 --min-duratio
 subtool info *.srt *.vtt *.ass
 ```
 
+#### Yerel videodan altyazı üretme (isteğe bağlı ek)
+
+`subtool transcribe`, Shorts, Reels ve TikTok için kelime zamanlı altyazıyı
+[faster-whisper](https://github.com/SYSTRAN/faster-whisper) ile tamamen bilgisayarınızda
+üretir. Ayrı bir ek (extra) olarak kurulur; çekirdek paket yine bağımlılıksız kalır:
+
+```bash
+pip install "subtitle-tools[transcribe]"         # --burn ve YAML stil için ffmpeg,yaml da ekleyin
+
+# Modelsiz deneme: depodaki hazır kelime zamanlarıyla
+subtool transcribe --words-json examples/transcribe/sample.words.json -o captions --format all --mode words --upper
+
+# Yerelde duran modelle video yazıya dökme; karaoke ASS ve güven raporu
+subtool transcribe video.mp4 --model ./models/small -o captions --format all --mode words --report json
+
+# Stilli ASS'yi yerel ffmpeg ile videoya gömme
+subtool transcribe video.mp4 --model ./models/small -o rendered --burn --style examples/transcribe/style.json
+```
+
+Komut hiçbir zaman model indirmez: önbellekteki bir model adı ya da yerel model klasörü
+verin. Çıktılar araç setinin geri kalanıyla aynı SRT, WebVTT ve ASS yazıcılarıyla
+yazılır; bu yüzden `subtool lint` ve `subtool shift` doğrudan üzerinde çalışır.
+Tüm seçenekler, stil dosyası biçimi, rapor alanları ve Python API'si:
+[docs/transcribe.md](docs/transcribe.md) (İngilizce).
+
+![subtool transcribe demosu](docs/transcribe-demo.svg)
+
 ### Python Kütüphane API'si
 
 `subtitle-tools`, Python projelerinde doğrudan içe aktarılarak kullanılabilir:
@@ -233,7 +261,10 @@ C: Hayır. `subtitle-tools` yalnızca metin tabanlı altyazılara odaklanmışt�
 C: `--fix`, yalnızca belirsizlik içermeyen durumları onarır: tamamen boş ipuçlarını siler, kapatılmamış veya bozuk HTML/ASS etiketlerini kapatır, satır sonlarını normalize eder, küçük zamanlama çakışmalarını düzeltir ve negatif/sıfır süreleri tamir eder. Metin kısaltma veya okuma hızı gibi yoruma dayalı durumlar ise kullanıcının kararına bırakılır.
 
 **S: Harici paket kurmadan sunucusuz (serverless) veya hafif ortamlarda çalışabilir mi?**  
-C: Evet. `subtitle-tools`, hiçbir üçüncü taraf çalışma zamanı kütüphanesine ihtiyaç duymaz. Yalnızca standart bir Python 3.10+ ortamı yeterlidir.
+C: Evet. `subtitle-tools`, hiçbir üçüncü taraf çalışma zamanı kütüphanesine ihtiyaç duymaz. Yalnızca standart bir Python 3.10+ ortamı yeterlidir. faster-whisper'ı yalnız isteğe bağlı `transcribe` eki kurar ve o da ancak `subtool transcribe` gerçekten bir medya dosyasını işlerken yüklenir.
+
+**S: `altyazi-tr` projesine ne oldu?**  
+C: Bu pakete `subtool transcribe` olarak taşındı (`pip install "subtitle-tools[transcribe]"`). Seçenekler aynı (sürüm artık `subtool --version` ile görülüyor); çıktılar ortak altyazı yazıcılarıyla üretiliyor.
 
 ## Katkıda Bulunma
 

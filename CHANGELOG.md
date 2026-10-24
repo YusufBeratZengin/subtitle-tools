@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] - 2026-10-24
+
+### Added
+- `subtool transcribe`: offline, word-timed subtitles for short vertical videos, merged in from the former `altyazi-tr` project. Install with `pip install "subtitle-tools[transcribe]"`.
+  - Local faster-whisper recognition that never downloads a model (`local_files_only=True`), with CUDA auto-detection and CPU `int8` fallback.
+  - Pause-aware layout for 9:16 video: line and cue limits, reading-speed targets, Turkish uppercase (`i→İ`, `ı→I`), and no stranded conjunctions at line ends.
+  - Karaoke ASS with active-word highlighting, JSON/YAML ASS styles, and `--burn` through local ffmpeg.
+  - `--words-json` / `--save-words` to re-layout saved word timings without loading the model, and `--report json` with low-confidence words and layout warnings.
+- New optional extras: `transcribe` (faster-whisper), `ffmpeg` (imageio-ffmpeg for `--burn`), and `yaml` (PyYAML for YAML styles). The core package still has zero runtime dependencies; faster-whisper is imported lazily.
+- `subtitle_tools.transcribe` Python API (`Word`, `WordCue`, `LayoutConfig`, `layout`, `layout_warnings`, `to_document`, `transcribe`, `Style`, `load_style`).
+- Top-level `subtool --version`.
+- `docs/transcribe.md`, `examples/transcribe/`, and a generated `docs/transcribe-demo.svg` (`scripts/make-transcribe-demo.py`).
+- Optional pre-commit credential guard (`.githooks/pre-commit`, `scripts/check_secrets.py`).
+
+### Changed
+- Transcription output reuses the core `Cue`, `SubtitleDocument`, `AssStyle`, and SRT/WebVTT/ASS writers instead of separate serializers. Compared with `altyazi-tr`, SRT and WebVTT files end with a single newline.
+- CI tests Python 3.10, 3.11, 3.12, and 3.13, runs the `unittest` suite against a core-only install, and declares read-only permissions.
+- `ruff` and `mypy` are part of the `dev` extra.
+
 ## [0.1.0] - 2026-10-23
 
 ### Added
